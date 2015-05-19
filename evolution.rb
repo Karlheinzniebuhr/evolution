@@ -1,7 +1,7 @@
 class Live
 	@@population = 0
 
-	def initialize(genes=0)
+	def initialize(genes='')
 		@@population += 1
 		@genes = genes
 		@alive = true
@@ -16,14 +16,14 @@ class Live
 	def number_of_lives_alive()
 		@@population
 	end
-	def genes(gen=0)
-		@genes += gen
+	def genes(gen='')
+		@genes << gen
 	end
 	def is_alive
 		@alive
 	end
 	def mutate()
-		@genes += rand(-1..1)
+		@genes << rand(1..9)
 	end
 end
 
@@ -32,12 +32,13 @@ class World
 	@@population = []
 	def initialize
 	end
-	def run(live, years, max_pop_length)
+	def run(live, years, max_pop_length, goal)
 		@@population << live
 		for year in 1..years
+			@@iterations += 1
 			for cell in @@population
 				
-				if cell.genes == 5
+				if cell.genes == goal
 					new_cell = cell.reproduce(cell.genes)
 					new_cell.mutate
 					@@population << new_cell
@@ -56,14 +57,28 @@ class World
 	end
 end
 
+class Intelligence
+	@@secret = ''
+	def initialize
+		3.times do
+			@@secret << rand(2).to_s
+		end
+		puts "Secret is: #{@@secret}"
+	end
+	
 
+	def secret
+		@@secret
+	end
+end
 
-seed = Live.new(rand(0..10))
+seed = Live.new(rand(0..9).to_s)
 live = seed
 
 world = World.new
 pop = []
 pop = world.run(live, 100, 1000)
+sec = Intelligence.new
 
 puts "end"
 unless pop.empty?
@@ -78,3 +93,5 @@ frequency = Hash.new(0)
 pop.each {|x| frequency[x.genes] += 1}
 frequency.sort
 frequency.each {|x,y| puts "#{x}: #{y}"}
+
+
